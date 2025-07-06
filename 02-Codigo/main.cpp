@@ -1146,7 +1146,7 @@ int main() {
 
 				while (true) {
 					system("cls");
-					std::cout << "Seleccione el método de eliminación:\n\n";
+					std::cout << "Seleccione el metodo de eliminacion:\n\n";
 					for (int i = 0; i < numOpcionesEliminar; i++) {
 						if (i == seleccionEliminar)
 							std::cout << " > " << opcionesEliminar[i] << std::endl;
@@ -1168,7 +1168,8 @@ int main() {
 				system("cls");
 				if (seleccionEliminar == 0) { // Por cédula
 					std::string cedula;
-					std::cout << "Ingrese la cédula (10 dígitos): ";
+					std::cout << std::endl << std::endl;
+					std::cout << "Ingrese la cedula (10 digitos): ";
 					int digitos = 0;
 					while (true) {
 						char tecla = _getch();
@@ -1194,7 +1195,8 @@ int main() {
 				}
 				else if (seleccionEliminar == 1) { // Por número de cuenta
 					std::string numCuenta;
-					std::cout << "Ingrese el número de cuenta: ";
+					std::cout << std::endl << std::endl;
+					std::cout << "Ingrese el numero de cuenta: ";
 					while (true) {
 						char tecla = _getch();
 						if (tecla >= '0' && tecla <= '9') {

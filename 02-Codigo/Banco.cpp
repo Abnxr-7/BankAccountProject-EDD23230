@@ -1719,7 +1719,7 @@ void Banco::eliminarCuentaPorCedula(const std::string& cedula) {
 	}
 
 	if (!encontrado) {
-		std::cout << "No se encontró ninguna persona con la cédula: " << cedula << std::endl;
+		std::cout << "No se encontro ninguna persona con la cedula: " << cedula << std::endl;
 		return;
 	}
 
@@ -1792,7 +1792,7 @@ void Banco::eliminarCuentaPorNumCuenta(const std::string& numeroCuenta) {
 	}
 
 	if (!encontrado) {
-		std::cout << "No se encontró ninguna cuenta con el número: " << numeroCuenta << std::endl;
+		std::cout << "No se encontro ninguna cuenta con el numero de cuenta: " << numeroCuenta << std::endl;
 		return;
 	}
 
