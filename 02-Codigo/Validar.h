@@ -73,11 +73,14 @@ public:
 
 	// Valida la busqueda del numero de cuenta
 	static std::string ValidarLeerNumeroCuenta();
-
-
-
-
 #pragma endregion
+
+	// Verifica si un archivo ya existe
+	static bool archivoExiste(const std::string& rutaArchivo);
+
+	// Genera un nombre de respaldo unico
+	static std::string generarNombreConIndice(const std::string& rutaDirectorio, const std::string& fechaFormateada);
+
 
 
 };

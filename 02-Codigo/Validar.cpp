@@ -4,6 +4,9 @@
 #include <iostream>
 #include <conio.h>
 #include <Windows.h>
+#include <sstream>
+#include <iomanip>
+#include <fstream>
 
 
 
@@ -257,5 +260,30 @@ bool Validar::ValidarTecla(char tecla, TipoEntrada tipo) {
         return std::isdigit(static_cast<unsigned char>(tecla)) || tecla == 8 || tecla == 13;
     default:
         return false;
+    }
+}
+
+bool Validar::archivoExiste(const std::string& rutaArchivo) {
+    std::ifstream f(rutaArchivo.c_str());
+    return f.is_open();
+}
+
+
+std::string Validar::generarNombreConIndice(const std::string& rutaDirectorio, const std::string& fechaFormateada)
+{
+    // Por ejemplo: "Respaldo" + "00" + "_" + "30_05_2025" + ".bak"
+    // Incrementa el indice si se detecta un archivo existente
+    int indice = 0;
+    while (true) {
+        std::ostringstream oss;
+        oss << "Respaldo" << std::setw(2) << std::setfill('0')
+            << indice << "_" << fechaFormateada;
+
+        std::string posibleNombre = rutaDirectorio + oss.str() + ".bak";
+        if (!archivoExiste(posibleNombre)) {
+            // Devuelve el nombre si no esta repetido
+            return oss.str();
+        }
+        indice++;
     }
 }

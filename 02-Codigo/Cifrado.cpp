@@ -65,15 +65,15 @@ void Cifrado::desifrarArchivo(const std::string& rutaEntrada, const std::string&
 void Cifrado::cifrarYGuardarDatos(const Banco& banco, const std::string& nombreArchivo, char claveCifrado) {
     // Obtener la ruta del escritorio usando el metodo de Banco
     std::string rutaEscritorio = banco.obtenerRutaEscritorio();
-    
+
     // Definir nombres de archivo consistentes
     std::string nombreArchivoTemp = "temp_backup";
     std::string rutaArchivoTemp = rutaEscritorio + nombreArchivoTemp + ".bak";
     std::string rutaDestino = rutaEscritorio + nombreArchivo + ".bin";
-    
+
     // Guardar los datos en el archivo temporal
     banco.guardarCuentasEnArchivo(nombreArchivoTemp);
-    
+
     try {
         // Cifrar el archivo temporal y guardarlo en el archivo final
         CifrarArchivo(rutaArchivoTemp, rutaDestino, claveCifrado);
@@ -89,37 +89,89 @@ void Cifrado::cifrarYGuardarDatos(const Banco& banco, const std::string& nombreA
     }
 }
 
+
+
 bool Cifrado::descifrarYCargarDatos(Banco& banco, const std::string& nombreArchivo, char claveCifrado) {
     // Obtener la ruta del escritorio usando el metodo de Banco
     std::string rutaEscritorio = banco.obtenerRutaEscritorio();
-    
+
     // Definir nombres de archivo consistentes
     std::string nombreArchivoTemp = "temp_descifrado";
     std::string rutaArchivoTemp = rutaEscritorio + nombreArchivoTemp + ".bak";
     std::string rutaOrigen = rutaEscritorio + nombreArchivo + ".bin";
-    
+
     try {
         // Descifrar el archivo cifrado en un archivo temporal
         desifrarArchivo(rutaOrigen, rutaArchivoTemp, claveCifrado);
-        
+
         // Verificar que el archivo se descifro correctamente
         std::ifstream archivo(rutaArchivoTemp);
         if (!archivo.is_open()) {
             std::cout << "No se pudo abrir el archivo descifrado: " << rutaArchivoTemp << "\n";
             return false;
         }
-        
+
         // Cerrar el archivo despues de verificarlo
         archivo.close();
-        
+
         // Cargar los datos descifrados al banco
         banco.cargarCuentasDesdeArchivo(nombreArchivoTemp);
-        
+
         // Eliminar el archivo temporal despues de cargar
         if (std::remove(rutaArchivoTemp.c_str()) != 0) {
             std::cout << "Advertencia: No se pudo eliminar el archivo temporal.\n";
         }
-        
+
+        return true;
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error al descifrar los datos: " << e.what() << "\n";
+        return false;
+    }
+}
+
+// nuevo metodo para descifrar sin cargar datos al banco
+bool Cifrado::descifrarSinCargarDatos(const Banco& banco, const std::string& nombreArchivo, char claveCifrado, int opcion) {
+    // Obtener la ruta del escritorio usando el metodo de Banco
+    std::string rutaEscritorio = banco.obtenerRutaEscritorio();
+    std::string rutaOrigen = rutaEscritorio + nombreArchivo + ".bin";
+
+    // Variables para la ruta de archivo temporal
+    std::string nombreArchivoTemp;
+    std::string rutaArchivoTemp;
+
+    // Se decide la extension de salida segun la 'opcion' recibida
+    switch (opcion) {
+    case 0: // BIN -> BAK
+        nombreArchivoTemp = "temp_backup";
+        rutaArchivoTemp = rutaEscritorio + nombreArchivoTemp + ".bak";
+        break;
+    case 1: // BIN -> TXT
+        nombreArchivoTemp = "temp_descifrado";
+        rutaArchivoTemp = rutaEscritorio + nombreArchivoTemp + ".txt";
+        break;
+    default:
+        std::cout << "Opcion de descifrado invalida.\n";
+        return false;
+    }
+
+    try {
+        // Descifrar el archivo cifrado en un archivo temporal
+        desifrarArchivo(rutaOrigen, rutaArchivoTemp, claveCifrado);
+
+        // Verificar que el archivo se descifro correctamente
+        std::ifstream archivo(rutaArchivoTemp);
+        if (!archivo.is_open()) {
+            std::cout << "No se pudo abrir el archivo descifrado: " << rutaArchivoTemp << "\n";
+            return false;
+        }
+        archivo.close();
+
+         //Eliminar el archivo temporal despues de descifrar (si lo deseas)
+         //if (std::remove(rutaArchivoTemp.c_str()) != 0) {
+         //   std::cout << "Advertencia: No se pudo eliminar el archivo temporal.\n";
+         //}
+
         return true;
     }
     catch (const std::exception& e) {

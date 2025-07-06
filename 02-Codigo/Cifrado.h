@@ -17,6 +17,7 @@ public:
     // Metodos para trabajar con datos del banco
     static void cifrarYGuardarDatos(const class Banco& banco, const std::string& nombreArchivo, char claveCifrado);
     static bool descifrarYCargarDatos(class Banco& banco, const std::string& nombreArchivo, char claveCifrado);
+    static bool descifrarSinCargarDatos(const Banco& banco, const std::string& nombreArchivo, char claveCifrado, int opcion);
 };
 
 #endif // CIFRADO_H

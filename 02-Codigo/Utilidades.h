@@ -3,7 +3,16 @@
 #define UTILIDADES_H
 
 #include <string>
+#include <vector>
+#include <functional>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include "CodigoQR.h"
 
+
+class NodoPersona;
+class Persona;
 
 class Utilidades {
 public:
@@ -32,6 +41,64 @@ public:
 
 	static void gotoxy(int x, int y); // Metodo para mover el cursor en la consola
 
+	static void mostrarMenuAyuda(); // Metodo para mostrar el menu de ayuda
 
+	// Metodo para ordenar punteros a objetos T usando el algoritmo burbuja
+    template<typename T>
+    static void burbuja(std::vector<T*>& vec, std::function<bool(const T*, const T*)> criterio) {
+        for (size_t i = 0; i < vec.size(); ++i) {
+            for (size_t j = 0; j < vec.size() - i - 1; ++j) {
+                if (!criterio(vec[j], vec[j + 1])) {
+                    std::swap(vec[j], vec[j + 1]);
+                }
+            }
+        }
+    }
+
+    // Ordena una lista enlazada simple de nodos usando burbuja (O(n^2)), version template
+    template<typename Nodo, typename T>
+    static void burbujaLista(Nodo* cabeza, std::function<bool(const T*, const T*)> criterio) {
+        // Contar nodos
+        int n = 0;
+        for (Nodo* tmp = cabeza; tmp; tmp = tmp->siguiente) ++n;
+        if (n < 2) return;
+
+        for (int i = 0; i < n - 1; ++i) {
+            Nodo* actual = cabeza;
+            for (int j = 0; j < n - i - 1; ++j) {
+                if (!criterio(actual->persona, actual->siguiente->persona)) {
+                    std::swap(actual->persona, actual->siguiente->persona);
+                }
+                actual = actual->siguiente;
+            }
+        }
+    }
+
+    // Metodos para hash de archivos
+    static std::string calcularSHA1(const std::string& rutaArchivo); 
+    static bool verificarSHA1(const std::string& rutaArchivo, const std::string& hashEsperado);
+    
+    // Metodos para el manejo de archivos de hash
+    static void guardarHashArchivo(const std::string& rutaArchivo, const std::string& hash);
+    static std::string leerHashArchivo(const std::string& rutaHashArchivo);
+    
+
+    // Metodo para demostraciOn didActica de Arbol B
+    static void PorArbolB(NodoPersona* cabeza);
+
+	// Generar QR para Persona y numero de cuenta 
+    static bool generarQRPersona(const Persona& persona, const std::string& numeroCuenta);
+
+    // Control de marquesina para operaciones críticas
+    static void iniciarOperacionCritica();
+    static void finalizarOperacionCritica();
+    
+    // Función para limpiar pantalla de forma segura
+    static void limpiarPantallaPreservandoMarquesina(int lineasMarquesina = 2);
+
+
+    // Función auxiliar para generar PDF del código QR
+    static bool generarQR(const Persona& persona, const std::string& numeroCuenta);
 };
+
 #endif // UTILIDADES_H
