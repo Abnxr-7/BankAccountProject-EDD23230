@@ -9,59 +9,168 @@
 #include "Validar.h" // Incluye la clase de validacion
 #include "Fecha.h" // Incluye la clase Fecha para manejar fechas
 
-// clase de cabecera para la clase Cuenta
-// clase Cuenta abstracta, haciendo uso de templates, memoria dinamica
+/**
+ * @brief Clase abstracta base para cuentas bancarias, usando templates y listas doblemente enlazadas.
+ * @tparam T Tipo de dato para el saldo (por ejemplo, double).
+ */
 template <typename T>
 class Cuenta {
 protected:
-	// Atributos comunes a todas las cuentas
-	std::string numeroCuenta;
-	T saldo;
-	Fecha fechaApertura;
-	std::string estadoCuenta;
+    std::string numeroCuenta;      ///< Número de cuenta bancaria.
+    T saldo;                       ///< Saldo de la cuenta.
+    Fecha fechaApertura;           ///< Fecha de apertura de la cuenta.
+    std::string estadoCuenta;      ///< Estado de la cuenta (activa, cerrada, etc.).
+    Cuenta<T>* siguiente;          ///< Puntero al siguiente nodo en la lista.
+    Cuenta<T>* anterior;           ///< Puntero al nodo anterior en la lista.
 
-	// Punteros para implementar una lista doblemente enlazada
-	Cuenta<T>* siguiente;
-	Cuenta<T>* anterior;
+    /**
+     * @brief Constructor protegido por defecto.
+     */
+    Cuenta()
+        : numeroCuenta(""), saldo(0), fechaApertura(), estadoCuenta(""), siguiente(nullptr), anterior(nullptr) {
+    }
 
-	// Constructores protegidos para herencia
-	Cuenta()
-		: numeroCuenta(""), saldo(0), fechaApertura(),estadoCuenta(""), siguiente(nullptr), anterior(nullptr) {
-	}
+    /**
+     * @brief Constructor protegido con parámetros.
+     * @param numeroCuenta Número de cuenta.
+     * @param saldo Saldo inicial.
+     * @param fechaStr Fecha de apertura en formato string.
+     * @param estadoCuenta Estado de la cuenta.
+     */
+    Cuenta(std::string numeroCuenta, T saldo, const std::string& fechaStr, std::string estadoCuenta)
+        : numeroCuenta(numeroCuenta), saldo(saldo), fechaApertura(fechaStr),
+        estadoCuenta(estadoCuenta), siguiente(nullptr), anterior(nullptr) {
+    }
 
-	// Constructor con parametros
-	Cuenta(std::string numeroCuenta, T saldo, const std::string& fechaStr, std::string estadoCuenta)
-		: numeroCuenta(numeroCuenta), saldo(saldo),fechaApertura(fechaStr), // Inicializa la fecha con el string
-		estadoCuenta(estadoCuenta), siguiente(nullptr), anterior(nullptr) {
-	}
-
-	// destructor virtual para permitir la liberacion de recursos en clases derivadas
-	virtual ~Cuenta() {}
+    /**
+     * @brief Destructor virtual para permitir liberación de recursos en clases derivadas.
+     */
+    virtual ~Cuenta() {}
 
 public:
-	// Getters
-	std::string getNumeroCuenta() const { return numeroCuenta; }
-	T getSaldo() const { return saldo; }
-	Fecha getFechaApertura() const { return fechaApertura; }
-	std::string getEstadoCuenta() const { return estadoCuenta; }
-	Cuenta<T>* getSiguiente() const { return siguiente; }
-	Cuenta<T>* getAnterior() const { return anterior; }
-	
-	// Setters
-	std::string setNumeroCuenta(const std::string& numero) { numeroCuenta = numero; return numeroCuenta; }
-	T setSaldo(T nuevoSaldo) { saldo = nuevoSaldo; return saldo; }
-	Fecha setFechaApertura(const std::string& fechaStr) { fechaApertura = Fecha(fechaStr); return fechaApertura; } // Asigna la fecha a partir de un string
-	std::string setEstadoCuenta(const std::string& estado) { estadoCuenta = estado; return estadoCuenta; }
-	void setSiguiente(Cuenta<T>* sig) { siguiente = sig; }
-	void setAnterior(Cuenta<T>* ant) { anterior = ant; }
+    // Getters
 
-	// Metodos virtuales puros
-	virtual void depositar(T cantidad) = 0; // Metodo para depositar
-	virtual void retirar(T cantidad) = 0; // Metodo para retirar
-	virtual double consultarSaldo() const = 0; // Metodo para consultar saldo
-	virtual std::string consultarEstado() const = 0; // Metodo para consultar estado
-	virtual void guardarEnArchivo(const std::string& nombreArchivo) const = 0; // Metodo para guardar en archivo
-	virtual void cargarDesdeArchivo(const std::string& nombreArchivo) = 0; // Metodo para cargar desde archivo
-	virtual void mostrarInformacion(const std::string& cedula = "", bool limpiarPantalla = true) const = 0; // Metodo para mostrar informacion de la cuenta
+    /**
+     * @brief Obtiene el número de cuenta.
+     * @return Número de cuenta como string.
+     */
+    std::string getNumeroCuenta() const { return numeroCuenta; }
+
+    /**
+     * @brief Obtiene el saldo de la cuenta.
+     * @return Saldo de la cuenta.
+     */
+    T getSaldo() const { return saldo; }
+
+    /**
+     * @brief Obtiene la fecha de apertura de la cuenta.
+     * @return Objeto Fecha con la fecha de apertura.
+     */
+    Fecha getFechaApertura() const { return fechaApertura; }
+
+    /**
+     * @brief Obtiene el estado de la cuenta.
+     * @return Estado de la cuenta como string.
+     */
+    std::string getEstadoCuenta() const { return estadoCuenta; }
+
+    /**
+     * @brief Obtiene el puntero al siguiente nodo en la lista.
+     * @return Puntero al siguiente nodo.
+     */
+    Cuenta<T>* getSiguiente() const { return siguiente; }
+
+    /**
+     * @brief Obtiene el puntero al nodo anterior en la lista.
+     * @return Puntero al nodo anterior.
+     */
+    Cuenta<T>* getAnterior() const { return anterior; }
+    
+    // Setters
+
+    /**
+     * @brief Establece el número de cuenta.
+     * @param numero Nuevo número de cuenta.
+     * @return El número de cuenta asignado.
+     */
+    std::string setNumeroCuenta(const std::string& numero) { numeroCuenta = numero; return numeroCuenta; }
+
+    /**
+     * @brief Establece el saldo de la cuenta.
+     * @param nuevoSaldo Nuevo saldo.
+     * @return El saldo asignado.
+     */
+    T setSaldo(T nuevoSaldo) { saldo = nuevoSaldo; return saldo; }
+
+    /**
+     * @brief Establece la fecha de apertura de la cuenta.
+     * @param fechaStr Fecha en formato string.
+     * @return Objeto Fecha asignado.
+     */
+    Fecha setFechaApertura(const std::string& fechaStr) { fechaApertura = Fecha(fechaStr); return fechaApertura; }
+
+    /**
+     * @brief Establece el estado de la cuenta.
+     * @param estado Nuevo estado.
+     * @return El estado asignado.
+     */
+    std::string setEstadoCuenta(const std::string& estado) { estadoCuenta = estado; return estadoCuenta; }
+
+    /**
+     * @brief Establece el puntero al siguiente nodo.
+     * @param sig Puntero al siguiente nodo.
+     */
+    void setSiguiente(Cuenta<T>* sig) { siguiente = sig; }
+
+    /**
+     * @brief Establece el puntero al nodo anterior.
+     * @param ant Puntero al nodo anterior.
+     */
+    void setAnterior(Cuenta<T>* ant) { anterior = ant; }
+
+    // Métodos virtuales puros
+
+    /**
+     * @brief Deposita una cantidad en la cuenta.
+     * @param cantidad Cantidad a depositar.
+     */
+    virtual void depositar(T cantidad) = 0;
+
+    /**
+     * @brief Retira una cantidad de la cuenta.
+     * @param cantidad Cantidad a retirar.
+     */
+    virtual void retirar(T cantidad) = 0;
+
+    /**
+     * @brief Consulta el saldo actual de la cuenta.
+     * @return Saldo actual.
+     */
+    virtual double consultarSaldo() const = 0;
+
+    /**
+     * @brief Consulta el estado actual de la cuenta.
+     * @return Estado de la cuenta como string.
+     */
+    virtual std::string consultarEstado() const = 0;
+
+    /**
+     * @brief Guarda la información de la cuenta en un archivo.
+     * @param nombreArchivo Nombre del archivo de destino.
+     */
+    virtual void guardarEnArchivo(const std::string& nombreArchivo) const = 0;
+
+    /**
+     * @brief Carga la información de la cuenta desde un archivo.
+     * @param nombreArchivo Nombre del archivo de origen.
+     */
+    virtual void cargarDesdeArchivo(const std::string& nombreArchivo) = 0;
+
+    /**
+     * @brief Muestra la información de la cuenta.
+     * @param cedula (Opcional) Cédula del titular.
+     * @param limpiarPantalla (Opcional) Si es true, limpia la pantalla antes de mostrar.
+     */
+    virtual void mostrarInformacion(const std::string& cedula = "", bool limpiarPantalla = true) const = 0;
 };
 #endif // CUENTA_H

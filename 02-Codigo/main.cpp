@@ -1,4 +1,14 @@
-﻿#include <iostream>
+﻿/**
+ * @file main.cpp
+ * @author Uriel Andrade, Kerly Chuqui, Abner Proaño (you@domain.com)
+ * @brief 
+ * @version 1.1
+ * @date 2025-07-07
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
+#include <iostream>
 #include <string>
 #include "Persona.h"
 #include <conio.h> // getch()
